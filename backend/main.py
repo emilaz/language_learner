@@ -2,6 +2,7 @@ import json
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models import MessageResponse, UserResponse, ExerciseResponse
+from conversation import generate_response
 
 with open('exercises.json') as f:
     EXERCISES = json.load(f)
@@ -21,15 +22,17 @@ app.add_middleware(
 async def start_exercise():
     # You'll implement the logic to get the first message
     return MessageResponse(
-        message="¿Cuándo es tu cumpleaños?",
+        message="Hola!",
         end_conversation=False
     )
 
 @app.post("/exercise/respond", response_model=MessageResponse)
-async def handle_response(user_response: UserResponse):
-    # You'll implement the logic to process the response and get the next message
+async def create_response(user_response: UserResponse):
+    # get the response from the conversation
+    response = generate_response(user_level= "A1", message_history=user_response.message_history)
+    # return the response
     return MessageResponse(
-        message="Placeholder response",
+        message=response,
         end_conversation=False
     ) 
 

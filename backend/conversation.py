@@ -15,7 +15,7 @@ def convert_message_history_to_openai_format(message_history: list[dict[str, boo
         openai_format.append({"role": "user" if message["isUser"] else "assistant", "content": message["text"]})
     return openai_format
 
-def generate_response(user_level: str, message_history: list[dict[str, bool]]) -> str:
+def generate_response(user_level: str, message_history: list[dict[str, bool]] = []) -> str:
     # define the openai client
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     # first, send a system message to the model with the following prompt
@@ -26,6 +26,7 @@ def generate_response(user_level: str, message_history: list[dict[str, bool]]) -
         2. Do not correct the user's grammar or punctuation. If you can guess what the user wanted to say, tell the user what you assume and then answer.
         3. if you don't understand the user's message at all, ask them to clarify it. 
         4. The user needs to complete objectives to finish the exercise. These are things they need to figure out through the conversation. 
+        5. If the user is saying goodbye, say goodbye too and end your response with [END_CONVERSATION].
         The user's spanish level is {user_level}.
     """
     }
@@ -41,5 +42,3 @@ def generate_response(user_level: str, message_history: list[dict[str, bool]]) -
     )
     # return the response
     return response.choices[0].message.content
-
-    return None

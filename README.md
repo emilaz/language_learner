@@ -12,9 +12,9 @@ The database is currently just a JSON file.
    ```
 
 
-# Running the app
+# Running the app locally
 
 1. Clone the repository
-2. Run `npm install` from the client folder
-3. Run `npm start` from the client folder
-4. Run `uvicorn backend.main:app --reload` from the root folder
+2. Run `npx expo install` from the frontend folder
+3. Run `npm start` from the frontend folder
+4. Run `uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload` from the root folder
