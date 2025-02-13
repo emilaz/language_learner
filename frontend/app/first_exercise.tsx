@@ -72,7 +72,7 @@ const FirstExercise = () => {
         method: 'POST'
       });
       const data = await response.json();
-      addMessage(data.message, false);
+      addMessage(data.text, false);
       setStarted(true);
     } catch (error) {
       addMessage('Error starting exercise', false);
@@ -82,23 +82,28 @@ const FirstExercise = () => {
 
   const messageExchange = async () => {
     if (!userInput.trim()) return;
-    
+
     const messageText = userInput;
     setUserInput('');
     addMessage(messageText, true);
 
-    
+    // Need to do construct this explicitly because the messages are not updated in the state immediately
+    const updatedMessages = [...messages, { text: messageText, isUser: true }];
+
     try {
+      // Fetch response from backend using the updated messages
       const response = await fetch(`${config.apiUrl}/exercise/respond`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ response: messageText }),
+        body: JSON.stringify(updatedMessages),
       });
+
       const data = await response.json();
-      addMessage(data.message, false);
+      addMessage(data.text, false);
       inputRef.current?.focus();
+
       if (data.end_conversation) {
         setIsEnded(true);
       }

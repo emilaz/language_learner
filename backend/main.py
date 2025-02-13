@@ -1,7 +1,7 @@
 import json
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from models import MessageResponse, UserResponse, ExerciseResponse
+from models import Message, ExerciseInfo, ServerResponseMessage
 from conversation import generate_response
 
 with open('exercises.json') as f:
@@ -18,32 +18,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/exercise/start", response_model=MessageResponse)
+@app.post("/exercise/start", response_model=ServerResponseMessage)
 async def start_exercise():
     # You'll implement the logic to get the first message
-    return MessageResponse(
-        message="Hola!",
+    return ServerResponseMessage(
+        text="Hola!",
         end_conversation=False
     )
 
-@app.post("/exercise/respond", response_model=MessageResponse)
-async def create_response(user_response: UserResponse):
+@app.post("/exercise/respond", response_model=ServerResponseMessage)
+async def create_response(message_history: list[Message]):
     # get the response from the conversation
-    response = generate_response(user_level= "A1", message_history=user_response.message_history)
+    response = generate_response(user_level= "A1", message_history=message_history)
+    # check if the response has [END_CONVERSATION]. in that case, set end_conversation to True and remove the [END_CONVERSATION] from the response
+    if "[END_CONVERSATION]" in response:
+        response = response.replace("[END_CONVERSATION]", "")
+        end_conversation = True
+    else:
+        end_conversation = False
     # return the response
-    return MessageResponse(
-        message=response,
-        end_conversation=False
+    return ServerResponseMessage(
+        text=response,
+        end_conversation=end_conversation
     ) 
-
-@app.get("/home")
-async def home():
-    return {
-        "message": "Hello, World!"
-    }
 
 @app.get("/exercise/{exercise_id}")
 async def exercise(exercise_id: str):
     if exercise_id not in EXERCISES:
         raise HTTPException(status_code=404, detail="Exercise not found")
-    return ExerciseResponse(**EXERCISES[exercise_id])
+    return ExerciseInfo(**EXERCISES[exercise_id])

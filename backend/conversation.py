@@ -5,17 +5,17 @@
 import openai
 import os
 from dotenv import load_dotenv
-
+from models import Message
 load_dotenv()
 
-def convert_message_history_to_openai_format(message_history: list[dict[str, bool]]) -> list[dict]:
+def convert_message_history_to_openai_format(message_history: list[Message]) -> list[dict]:
     # convert the message history to the openai format
     openai_format = []
     for message in message_history:
-        openai_format.append({"role": "user" if message["isUser"] else "assistant", "content": message["text"]})
+        openai_format.append({"role": "user" if message.isUser else "assistant", "content": message.text})
     return openai_format
 
-def generate_response(user_level: str, message_history: list[dict[str, bool]] = []) -> str:
+def generate_response(user_level: str, message_history: list[Message] = []) -> str:
     # define the openai client
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     # first, send a system message to the model with the following prompt

@@ -1,14 +1,15 @@
 from pydantic import BaseModel
 
-class MessageResponse(BaseModel):
-    message: str
+class ServerResponseMessage(BaseModel):
+    text: str
     end_conversation: bool = False
 
 
-class UserResponse(BaseModel):
-    response: str 
+class Message(BaseModel):
+    text: str
+    isUser: bool
 
-class ExerciseResponse(BaseModel):
+class ExerciseInfo(BaseModel):
     title: str
     objectives: list[str]
     vocabulary: list[str]
