@@ -76,7 +76,6 @@ export default function FirstExercise() {
     const messageText = userInput;
     setUserInput('');
 
-    // Need to do construct this explicitly because the messages are not updated in the state immediately
     const updatedMessages = [...messages, { text: messageText, isUser: true }];
     setMessages(updatedMessages);
 
@@ -86,8 +85,19 @@ export default function FirstExercise() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ updatedMessages }),
+        body: JSON.stringify({
+          message_history: updatedMessages.map(msg => ({
+            text: msg.text,
+            is_user: msg.isUser
+          }))
+        }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Request failed');
+      }
+
       const data = await response.json();
       setMessages(prev => [...prev, { text: data.text, isUser: false }]);
       inputRef.current?.focus();
@@ -96,7 +106,7 @@ export default function FirstExercise() {
         setIsEnded(true);
       }
     } catch (error) {
-      handleError('Error sending response');
+      handleError(error instanceof Error ? error.message : 'Error sending response');
     }
   };
   if (!started) {
