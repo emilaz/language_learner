@@ -67,6 +67,7 @@ export default function FirstExercise() {
         } catch (error) {
           console.error('Error fetching exercise:', error);
           // Handle error (maybe show error message to user)
+          handleError('Error fetching exercise data');
         }
       };
   
@@ -102,9 +103,6 @@ export default function FirstExercise() {
     try {
       const response = await fetch(`${config.apiUrl}/exercise/respond`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(updatedMessages),
         headers: {
           'Content-Type': 'application/json',
@@ -190,7 +188,7 @@ export default function FirstExercise() {
         <View style={styles.objectivesPanel}>
           <Text style={styles.objectivesTitle}>Your Objectives:</Text>
           {exerciseData.objectives.map((obj: string, index: number) => (
-            <View key={index} style={styles.objectiveItem}>
+            <View key={index} style={styles.objectiveItemToggled}>
               <MaterialIcons
                 name={completedObjectives[index] ? 'check-box' : 'check-box-outline-blank'}
                 size={20}
@@ -262,7 +260,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
-  objectiveItem: {
+  objectiveItemToggled: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 6,
