@@ -95,7 +95,13 @@ export default function FirstExercise() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail[0].msg || 'Request failed');
+        // Handle different error formats from FastAPI
+        const errorMessage = errorData?.detail ?
+          (Array.isArray(errorData.detail) 
+            ? errorData.detail[0]?.msg 
+            : errorData.detail) 
+          : 'Request failed';
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -106,7 +112,11 @@ export default function FirstExercise() {
         setIsEnded(true);
       }
     } catch (error) {
-      handleError(error instanceof Error ? error.message : 'Error sending response');
+      handleError(
+        error instanceof Error ? 
+        error.message.replace('Error: ', '') :  // Remove any redundant 'Error:' prefix
+        'Failed to send response. Please try again.'
+      );
     }
   };
   if (!started) {
