@@ -30,7 +30,7 @@ export const ChatInput = forwardRef<TextInput, ChatInputProps>(({
       />
     </View>
   );
-}
+}); 
 
 const styles = StyleSheet.create({
   inputContainer: {
