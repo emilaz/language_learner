@@ -29,7 +29,9 @@ export default function FirstExercise() {
   const [exerciseData, setExerciseData] = useState<any>(null);
   const [showObjectives, setShowObjectives] = useState(false);
   const [sessionId] = useState(uuidv4());
-  const [completedObjectives, setCompletedObjectives] = useState<Set<number>>(new Set());
+  const [completedObjectives, setCompletedObjectives] = useState<boolean[]>(
+    Array(exerciseData?.objectives?.length || 0).fill(false)
+  );
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
   const [userInput, setUserInput] = useState('');
@@ -44,7 +46,11 @@ export default function FirstExercise() {
   const handleNewCompletedObjectives = (newlyCompleted: number[]) => {
     setCompletedObjectives(prev => {
       const updated = [...prev];
-      newlyCompleted.forEach(index => updated[index] = true);
+      newlyCompleted.forEach(index => {
+        if (index >= 0 && index < updated.length) {
+          updated[index] = true;
+        }
+      });
       return updated;
     });
     
