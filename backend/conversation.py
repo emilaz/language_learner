@@ -12,7 +12,7 @@ def convert_message_history_to_openai_format(message_history: list[Message]) -> 
     # convert the message history to the openai format
     openai_format = []
     for message in message_history:
-        openai_format.append({"role": "user" if message.isUser else "assistant", "content": message.text})
+        openai_format.append({"role": "user" if message.is_user else "assistant", "content": message.text})
     return openai_format
 
 def generate_response(user_level: str, message_history: list[Message] = []) -> str:

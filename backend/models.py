@@ -7,7 +7,7 @@ class ServerResponseMessage(BaseModel):
 
 class Message(BaseModel):
     text: str
-    isUser: bool
+    is_user: bool
 
 class ExerciseInfo(BaseModel):
     title: str
