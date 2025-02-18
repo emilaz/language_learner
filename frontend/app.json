@@ -32,12 +32,13 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
     },
-    "sdkVersion": "50.0.0"
+    "sdkVersion": "52.0.0"
   },
   "name": "frontend"
 }
