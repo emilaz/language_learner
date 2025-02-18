@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 
 class ServerResponseMessage(BaseModel):
     text: str
@@ -7,7 +7,9 @@ class ServerResponseMessage(BaseModel):
 
 class Message(BaseModel):
     text: str
-    is_user: bool
+    is_user: bool = Field(alias="isUser")
+
+    model_config = ConfigDict(populate_by_name=True)
 
 class ExerciseInfo(BaseModel):
     title: str

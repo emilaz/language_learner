@@ -86,10 +86,7 @@ export default function FirstExercise() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(
-          updatedMessages.map(msg => ({
-            text: msg.text,
-            is_user: msg.isUser
-          }))
+          updatedMessages
         ),
       });
 
@@ -131,8 +128,10 @@ export default function FirstExercise() {
       <View style={styles.objectivesList}>
         {exerciseData.objectives.map((objective: string, index: number) => (
           <Text key={index} style={styles.objectiveItem}>{objective}</Text>
-        ))}
-        <Text style={styles.objectiveItem}>💬 Use the following vocabulary: {exerciseData.vocabulary.join(', ')}</Text>
+        ))} 
+        <Text style={styles.objectiveItem}>💬 Use the following vocabulary: 
+        <Text style={[styles.objectiveItem, { fontWeight: 'bold' }]}>{' ' + exerciseData.vocabulary.join(', ')}</Text></Text>
+        <Text style={styles.objectiveItem}>🥅 You have 10 messages to reach your goal. Good luck!</Text>
       </View>
       <Button title="Empezar" onPress={startExercise} />
     </View>
@@ -183,7 +182,7 @@ export default function FirstExercise() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   headerText: {
     fontSize: 24,
