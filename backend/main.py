@@ -12,7 +12,7 @@ with open('exercises.json') as f:
 app = FastAPI()
 
 # Session storage (temp in-memory for development)
-session_ Dict[str, Set[int]] = {}
+session_data: Dict[str, Set[int]] = {}
 
 # Add CORS middleware to allow requests from Expo
 app.add_middleware(
