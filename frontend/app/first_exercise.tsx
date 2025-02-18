@@ -95,7 +95,7 @@ export default function FirstExercise() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Request failed');
+        throw new Error(errorData.detail[0].msg || 'Request failed');
       }
 
       const data = await response.json();
