@@ -15,7 +15,11 @@ def convert_message_history_to_openai_format(message_history: list[Message]) -> 
         openai_format.append({"role": "user" if message.is_user else "assistant", "content": message.text})
     return openai_format
 
-def generate_response(user_level: str, message_history: list[Message] = []) -> str:
+def generate_response(
+    user_level: str,
+    message_history: list[Message] = [],
+    current_objectives: set[int] = set()
+) -> str:
     # define the openai client
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     # first, send a system message to the model with the following prompt

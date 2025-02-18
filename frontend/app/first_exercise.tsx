@@ -10,6 +10,7 @@
 // 9. When the conversation ends, the user will see a message "Gracias por participar"
 
 import React, { useState, useRef, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { View, Text, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, TextInput, Button, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ChatMessage } from '@/components/ChatMessage';
@@ -27,7 +28,8 @@ export default function FirstExercise() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [exerciseData, setExerciseData] = useState<any>(null);
   const [showObjectives, setShowObjectives] = useState(false);
-  const [completedObjectives, setCompletedObjectives] = useState<boolean[]>([]);
+  const [sessionId] = useState(uuidv4());
+  const [completedObjectives, setCompletedObjectives] = useState<Set<number>>(new Set());
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
   const [userInput, setUserInput] = useState('');
@@ -75,7 +77,10 @@ export default function FirstExercise() {
   const startExercise = async () => {
     try {
       const response = await fetch(`${config.apiUrl}/exercise/start`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'X-Session-ID': sessionId
+        }
       });
       const data = await response.json();
       setMessages(prev => [...prev, { text: data.text, isUser: false }]);
@@ -100,9 +105,11 @@ export default function FirstExercise() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(
-          updatedMessages
-        ),
+        body: JSON.stringify(updatedMessages),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-ID': sessionId
+        },
       });
 
       if (!response.ok) {
