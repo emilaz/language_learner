@@ -1,3 +1,4 @@
+import React, { forwardRef } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 
 type ChatInputProps = {
@@ -5,10 +6,11 @@ type ChatInputProps = {
   onChangeText: (text: string) => void;
   onSend: () => void;
   disabled?: boolean;
-  ref?: React.RefObject<TextInput>;
 };
 
-export function ChatInput({ value, onChangeText, onSend, disabled, ref}: ChatInputProps) {
+export const ChatInput = forwardRef<TextInput, ChatInputProps>(({ 
+  value, onChangeText, onSend, disabled 
+}, ref) => {
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -19,8 +21,13 @@ export function ChatInput({ value, onChangeText, onSend, disabled, ref}: ChatInp
         onSubmitEditing={onSend}
         returnKeyType="send"
         ref={ref}
+        blurOnSubmit={false}
       />
-      <Button title="Send" onPress={onSend} disabled={disabled || !value.trim()} />
+      <Button 
+        title="Send" 
+        onPress={onSend} 
+        disabled={disabled || !value.trim()} 
+      />
     </View>
   );
 }
