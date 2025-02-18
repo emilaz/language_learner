@@ -30,17 +30,22 @@ async def start_exercise():
 async def create_response(message_history: list[Message]):
     # get the response from the conversation
     response = generate_response(user_level= "A1", message_history=message_history)
-    # check if the response has [END_CONVERSATION]. in that case, set end_conversation to True and remove the [END_CONVERSATION] from the response
+    # Temporary stub logic - replace later with real tracking
+    completed_objectives = []
+    if "completed" in response.lower():
+        completed_objectives = [0]  # Example - always mark first objective as completed
+
     if "[END_CONVERSATION]" in response:
         response = response.replace("[END_CONVERSATION]", "")
         end_conversation = True
     else:
         end_conversation = False
-    # return the response
+    
     return ServerResponseMessage(
         text=response,
-        end_conversation=end_conversation
-    ) 
+        end_conversation=end_conversation,
+        completed_objectives=completed_objectives
+    )
 
 @app.get("/exercise/{exercise_id}")
 async def exercise(exercise_id: str):

@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field, ConfigDict
 class ServerResponseMessage(BaseModel):
     text: str
     end_conversation: bool = False
+    completed_objectives: list[int] = []
 
 
 class Message(BaseModel):

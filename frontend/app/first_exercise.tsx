@@ -10,7 +10,8 @@
 // 9. When the conversation ends, the user will see a message "Gracias por participar"
 
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, TextInput, Button } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, TextInput, Button, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { ChatMessage } from '@/components/ChatMessage';
 import { ChatInput } from '@/components/ChatInput';
 import { ErrorToast } from '@/components/ErrorToast';
@@ -25,6 +26,9 @@ export default function FirstExercise() {
   const [started, setStarted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [exerciseData, setExerciseData] = useState<any>(null);
+  const [showObjectives, setShowObjectives] = useState(false);
+  const [completedObjectives, setCompletedObjectives] = useState<boolean[]>([]);
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
   const [userInput, setUserInput] = useState('');
   const [isEnded, setIsEnded] = useState(false);
@@ -33,6 +37,17 @@ export default function FirstExercise() {
 
   const handleError = (message: string) => {
     setError(message);
+  };
+
+  const handleNewCompletedObjectives = (newlyCompleted: number[]) => {
+    setCompletedObjectives(prev => {
+      const updated = [...prev];
+      newlyCompleted.forEach(index => updated[index] = true);
+      return updated;
+    });
+    
+    setFeedbackMessage('Objective completed!');
+    setTimeout(() => setFeedbackMessage(null), 2000);
   };
 
     // Reference to TextInput for maintaining focus
@@ -105,6 +120,10 @@ export default function FirstExercise() {
       setMessages(prev => [...prev, { text: data.text, isUser: false }]);
       inputRef.current?.focus();
 
+      if (data.completed_objectives && data.completed_objectives.length > 0) {
+        handleNewCompletedObjectives(data.completed_objectives);
+      }
+
       if (data.end_conversation) {
         setIsEnded(true);
       }
@@ -144,9 +163,43 @@ export default function FirstExercise() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
-      <Text style={styles.headerText}>
-        {isEnded ? 'Gracias por participar' : 'Hablamos de tu cumpleaños'}
-      </Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>
+          {isEnded ? 'Gracias por participar' : 'Hablamos de tu cumpleaños'}
+        </Text>
+        <TouchableOpacity 
+          onPress={() => setShowObjectives(!showObjectives)}
+          style={styles.toggleButton}
+        >
+          <MaterialIcons 
+            name={showObjectives ? 'close' : 'info-outline'} 
+            size={24} 
+            color="#007AFF" 
+          />
+        </TouchableOpacity>
+      </View>
+
+      {showObjectives && (
+        <View style={styles.objectivesPanel}>
+          <Text style={styles.objectivesTitle}>Your Objectives:</Text>
+          {exerciseData.objectives.map((obj: string, index: number) => (
+            <View key={index} style={styles.objectiveItem}>
+              <MaterialIcons
+                name={completedObjectives[index] ? 'check-box' : 'check-box-outline-blank'}
+                size={20}
+                color="#007AFF"
+              />
+              <Text style={styles.objectiveText}>{obj}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {feedbackMessage && (
+        <View style={styles.feedbackToast}>
+          <Text style={styles.feedbackText}>{feedbackMessage}</Text>
+        </View>
+      )}
       
       <ScrollView 
         ref={scrollViewRef}
@@ -183,6 +236,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  toggleButton: {
+    padding: 8,
+  },
+  objectivesPanel: {
+    padding: 16,
+    backgroundColor: '#f8f8f8',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  objectiveItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 6,
+  },
+  objectiveText: {
+    marginLeft: 8,
+    fontSize: 16,
+  },
+  feedbackToast: {
+    position: 'absolute',
+    top: 70,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,122,255,0.9)',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  feedbackText: {
+    color: 'white',
+    fontSize: 14,
   },
   headerText: {
     fontSize: 24,
