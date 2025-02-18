@@ -9,7 +9,7 @@ from conversation import generate_response
 with open('exercises.json') as f:
     EXERCISES = json.load(f)
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 # Session storage (temp in-memory for development)
 session_data: Dict[str, Set[int]] = {}
@@ -39,7 +39,7 @@ async def start_exercise(session_id: str = Header(default=None)):
 @app.post("/exercise/respond", response_model=ServerResponseMessage)
 async def create_response(
     message_history: list[Message],
-    session_id: str = Header(...)
+    session_id: str = Header(None, alias="X-Session-ID")
 ):
     # Get existing completed objectives
     current_completed = session_data.get(session_id, set())
