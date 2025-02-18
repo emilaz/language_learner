@@ -85,12 +85,12 @@ export default function FirstExercise() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          message_history: updatedMessages.map(msg => ({
+        body: JSON.stringify(
+          updatedMessages.map(msg => ({
             text: msg.text,
             is_user: msg.isUser
           }))
-        }),
+        ),
       });
 
       if (!response.ok) {
