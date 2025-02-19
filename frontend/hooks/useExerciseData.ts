@@ -5,10 +5,12 @@ import config from '@/config';
 export function useExerciseData(exerciseId: string) {
   const [exercise, setExercise] = useState<Exercise | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchExercise = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`${config.apiUrl}/exercise/${exerciseId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -18,11 +20,13 @@ export function useExerciseData(exerciseId: string) {
       } catch (error) {
         console.error('Error fetching exercise:', error);
         setError('Error fetching exercise data');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchExercise();
   }, [exerciseId]);
 
-  return { exercise, error };
+  return { exercise, error, loading };
 }
