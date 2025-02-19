@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = {
   objectives: string[];
-  completedObjectives: boolean[];
+  completedObjectives: number[];
 };
 
 export function ObjectivesPanel({ objectives, completedObjectives }: Props) {

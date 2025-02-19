@@ -28,5 +28,9 @@ export function useExerciseData(exerciseId: string) {
     fetchExercise();
   }, [exerciseId]);
 
-  return { exercise, error, loading };
+  const clearError = () => setError(null);
+
+
+  return { exercise, loading, error, clearError
+  };
 }

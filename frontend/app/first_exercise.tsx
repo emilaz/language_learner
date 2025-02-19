@@ -8,21 +8,23 @@ import { ObjectivesPanel } from '@/components/ObjectivesPanel';
 import { ErrorToast } from '@/components/ErrorToast';
 
 export default function FirstExercise() {
-  const { exercise, loading, error: exerciseError } = useExerciseData('1');
+  const { exercise, loading, error: exerciseError, clearError: clearExerciseError } = useExerciseData('1');
   const {
     messages,
+    completedObjectives,
     isEnded,
     error: chatError,
     startChat,
-    sendMessage,
-    completedObjectives
+    sendMessageAndGetReply,
+    clearError: clearChatError
   } = useChatSession();
+
 
   if (loading) return <View style={styles.container}><Text>Loading...</Text></View>;
 
   return (
     <View style={styles.container}>
-      {exerciseError && <ErrorToast message={exerciseError} />}
+      {exerciseError && <ErrorToast message={exerciseError} onHide={clearExerciseError}/>}
       
       {exercise ? (
         !messages.length ? (
@@ -33,7 +35,7 @@ export default function FirstExercise() {
         ) : (
           <ChatInterface
             messages={messages}
-            onSend={sendMessage}
+            onSend={sendMessageAndGetReply}
             isEnded={isEnded}
             headerText={isEnded ? 'Gracias por participar' : 'Hablamos de tu cumpleaños'}
           >
@@ -42,11 +44,11 @@ export default function FirstExercise() {
               completedObjectives={completedObjectives}
             />
             
-            {chatError && <ErrorToast message={chatError} />}
+            {chatError && <ErrorToast message={chatError} onHide={clearChatError} />}
           </ChatInterface>
         )
       ) : (
-        <ErrorToast message="Failed to load exercise" />
+        <ErrorToast message="Failed to load exercise" onHide={() => (null)} />
       )}
     </View>
   );

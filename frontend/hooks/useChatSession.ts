@@ -5,6 +5,7 @@ import config from '@/config';
 
 export function useChatSession() {
   const [messages, setMessages] = useState<ExerciseMessage[]>([]);
+  const [completedObjectives, setCompletedObjectives] = useState<number[]>([]);
   const [isEnded, setIsEnded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sessionId] = useState(uuidv4());
@@ -26,7 +27,7 @@ export function useChatSession() {
     }
   }, [sessionId]);
 
-  const sendMessage = useCallback(async (text: string) => {
+  const sendMessageAndGetReply = useCallback(async (text: string) => {
     const updatedMessages = [...messages, { text, isUser: true }];
     setMessages(updatedMessages);
 
@@ -51,7 +52,7 @@ export function useChatSession() {
         setIsEnded(true);
       }
 
-      return data.completed_objectives;
+      setCompletedObjectives(prev => [...prev, data.completed_objectives]);
     } catch (error) {
       setError('Failed to send message');
       return [];
@@ -60,10 +61,11 @@ export function useChatSession() {
 
   return {
     messages,
+    completedObjectives,
     isEnded,
     error,
     startChat,
-    sendMessage,
+    sendMessageAndGetReply,
     clearError: () => setError(null)
   };
 }
